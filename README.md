@@ -12,7 +12,7 @@ Work on Sketch 3.9.1 and up(not test in lower versions).
 2.Run `Plugins > Font Packer > Collect Font Files` or use shortcut `control`+`shift`+`T`.  
 3.Choose a folder and follow the steps.  
 <br>
-![demoGIF](https://github.com/bigxixi/Font-Packer/blob/master/demo.gif)
+![demoGIF](https://github.com/bigxixi/Font-Packer/blob/master/DEMO.gif)
 <br>
 <br>
 Special thanks to [utom](https://github.com/utom)
