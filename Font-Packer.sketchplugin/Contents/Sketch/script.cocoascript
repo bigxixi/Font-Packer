@@ -1,7 +1,8 @@
-//script by bigxixi 2016.09
+//script by bigxixi 2016.10
 //todo:
 //1.a checkbox to select and export the whole font family
 //2.a progressbar when exporting
+//3.check for missed fonts
 //Not good at either coding or English, hope you can understand my code and descriptions :)
 
 //check system language.only Chinese and English for now.
@@ -117,11 +118,24 @@ var onRun = function(context) {
             createFolderAtPath(collectFontPath);
 
             //get font list with name and location
-            //create font info temp file
-            //'system_profiler SPFontsDataType' list all fonts info on the system in a specific format,
-            //'grep -E ...' extract font location with key words from the list, and then save to a temp file 'sysfonts.txt'.
+            //
+            //main idea:
+            //I was confused but the previous 'system_profiler SPFontsDataType' methed would miss some font info, so I change the way.
+            //there are 4 Font folders in Mac OS -
+            //>  /System/Library/Fonts/
+            //>  ~/Library/Fonts/
+            //>  /Library/Fonts/
+            //>  /Network/Library/Fonts/ (may not exist, but never mind)
+            //then I use terminal command 'ls' to get their paths and save them in a temp file,
+            //and I use another terminal command 'mdls -name com_apple_ats_name_postscript' to get all their "postscriptname"s which
+            //Sketch reconized as the font name, and save to another temp file.
+            //I realised the order of the paths and postscriptnames in the two files are matched,
+            //so it's easy to search for the target postscriptnames and take the index in the path file. 
+            //
+            //create font info temp files
             var fontlist = collectPath + "/sysfonts.txt";
-            var getSysFonts="system_profiler SPFontsDataType | grep -E -v '^$|^[a-zA-Z]|Kind:|Valid:|Enabled:|Typefaces:|Full Name:|Style:|Version:|Vendor:|Unique Name:|Designer:|Copyright:|Outline:|Valid:|Enabled:|Duplicate:|Copy Protected:|Embeddable:|Trademark:|Description:|Copyright' > " + '"' + fontlist + '"';
+            var fontMadataList = collectPath + "/fontmadatas.txt";
+            var getSysFonts = "(mdls -name com_apple_ats_name_postscript /Library/Fonts/*.* -raw;mdls -name com_apple_ats_name_postscript /System/Library/Fonts/*.* -raw;mdls -name com_apple_ats_name_postscript ~/Library/Fonts/*.* -raw;mdls -name com_apple_ats_name_postscript /Network/Library/Fonts/*.* -raw) > " + '"' + fontMadataList + '";' + "(ls /Library/Fonts/*.*;ls /System/Library/Fonts/*.*;ls ~/Library/Fonts/*.*;ls /Network/Library/Fonts/*.*) > " + '"' + fontlist + '"';
             var getFontsCMD = [[NSTask alloc] init];
                 [getFontsCMD setLaunchPath: @"/bin/sh"];
                 [getFontsCMD setArguments:["-c", getSysFonts]];
@@ -129,23 +143,25 @@ var onRun = function(context) {
                  // show a tip and wait for completion
                 app.displayDialog_withTitle(loading,tips);
                 [getFontsCMD waitUntilExit];
-            //read font info temp file and get all font locations
+            //read font info temp files and split them into groups
             var fontTemp = readTextFromFile(fontlist);
-            //split into string array by "location:"
-            var fontTempGroup =[fontTemp componentsSeparatedByString:@"Location: "];
+            var fontMadataTemp = readTextFromFile(fontMadataList);
+            var fontMadataGroup = [fontMadataTemp componentsSeparatedByString:@")"];
+            var fontTempGroup =[fontTemp componentsSeparatedByString:@"\n"];
             var tempGroupElement;
             var tempGroupElementItem;
             var fontLocationTemp;
-            var fontLocations=new Array();
-            //get the matched locations
+            var fontLocations = new Array();
+
             for(var m=0;m<fonts.length;m++){
                 tempGroupElement=fonts[m];
-                for(var n=0;n<[fontTempGroup count];n++){
-                    tempGroupElementItem = fontTempGroup[n];
+                for(var n=0;n<[fontMadataGroup count]-1;n++){
+                    //do some clean up
+                    fontMadataGroup[n] = fontMadataGroup[n].replace('(','').replace(/\n/g,'').replace(/\u0022/g,'');
+                    tempGroupElementItem = fontMadataGroup[n];
                     fontLocationTemp = tempGroupElementItem.rangeOfString(tempGroupElement.toString());
-                    if(fontLocationTemp.length!=0){
-                        fontLocationTemp = [tempGroupElementItem componentsSeparatedByString:@"\n"];
-                        fontLocations[m] = fontLocationTemp[0];
+                    if(fontLocationTemp.length != 0){
+                        fontLocations[m] = fontTempGroup[n];
                     }
                 }
             }
@@ -159,7 +175,7 @@ var onRun = function(context) {
                 copyFonts += "cp " + '"' + fontLocations[g] + '" "' + targetFontPath + '";';
 
             }
-            copyFonts +="cp " + '"' + ofilePath + '" "' + collectPath + "/" + fileNameFull + '";' + "rm " +  '"' + fontlist + '"';
+            copyFonts +="cp " + '"' + ofilePath + '" "' + collectPath + "/" + fileNameFull + '";' + "rm " +  '"' + fontlist + '";' + "rm " +  '"' + fontMadataList + '"';
             var copyFontsCMD = [[NSTask alloc] init];
             [copyFontsCMD setLaunchPath: @"/bin/sh"];
             [copyFontsCMD setArguments:["-c", copyFonts]];
