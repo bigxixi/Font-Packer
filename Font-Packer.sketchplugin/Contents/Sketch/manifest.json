@@ -20,10 +20,10 @@
       "FontPacker.packFont",
       "FontPacker.help"
     ],
-    "title" : "💼 Font Packer v1.0"
+    "title" : "💼 Font Packer v1.1"
   },
   "identifier" : "com.sketch.bigxixi.FontPacker",
-  "version" : "1.0",
+  "version" : "1.1",
   "description" : "Collect font files you used in your sketch file.",
   "authorEmail" : "xixi@bigxixi.com",
   "name" : "Font Packer"
