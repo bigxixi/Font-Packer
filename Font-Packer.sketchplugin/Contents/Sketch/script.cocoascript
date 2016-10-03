@@ -2,7 +2,6 @@
 //todo:
 //1.a checkbox to select and export the whole font family
 //2.a progressbar when exporting
-//3.check for missed fonts
 //Not good at either coding or English, hope you can understand my code and descriptions :)
 
 //check system language.only Chinese and English for now.
@@ -12,8 +11,11 @@ if(NSUserDefaults.standardUserDefaults().objectForKey("AppleLanguages").objectAt
     var savetip = "请先保存文件！";
     var notextlayer = "本文档没有字体图层，将只导出sketch文件。";
     var done = "导出完成";
-    var doneWithFons = "打包完成，本文使用了如下字体：\n";
-    var helptext = "本插件用于将文档中用到的字体打包。\n快捷键：Control + Shift + T\n运行后会新建一个文件夹，文件夹里复制了一份sketch文件，字体存放在'font'文件夹里。\n为防止错误的字体文件名重复导致覆盖，字体前将加上Font1_、Font2_……前缀。\n\n注意:如果某个字体的‘粗体’、‘斜体’等是分开的字体文件，而sketch文件中只用到了其中一个字体样式，将只打包用到的样式的字体文件。\n\n任何问题欢迎联系xixi@bigxixi.com";
+    var doneWithFonts = "打包完成，本文档使用了如下字体：\n";
+    var allFontsmissed = "悲剧了！本文档用的字体都缺失了\n";
+    var fontMissNote = "\n以下字体缺失：\n";
+    var missedFontListTitle = "缺失的字体.txt";
+    var helptext = "本插件用于将文档中用到的字体打包。\n快捷键：Control + Shift + T\n运行后会新建一个文件夹，文件夹里复制了一份sketch文件，字体存放在'font'文件夹里。\n（如果有字体版权问题请自行处理。）\n为防止错误的字体文件名重复导致覆盖，字体前将加上Font1_、Font2_……前缀。\n\n注意:如果某个字体的‘粗体’、‘斜体’等是分开的字体文件，而sketch文件中只用到了其中一个字体样式，将只打包用到的样式的字体文件。\n\n任何问题欢迎联系xixi@bigxixi.com";
     var helptip = "帮助：";
     }else{
     var tips = "NOTE:";
@@ -21,7 +23,10 @@ if(NSUserDefaults.standardUserDefaults().objectForKey("AppleLanguages").objectAt
     var savetip = "Plaese save your Sketch file first! ";
     var notextlayer = "Didn't find any textlayers, only the .sketch file it self would be exported.";
     var done = "DONE!";
-    var doneWithFons = "Done! Fonts in this file：\n";
+    var doneWithFonts = "Done! Fonts in this file：\n";
+    var allFontsmissed = "Oops!All fonts in this file missed!\n\n";
+    var fontMissNote = "\nMissed fonts:\n";
+    var missedFontListTitle = "MissedFonts.txt";
     var helptext = "This plug-in can help you collect the font files you used in your sketch file.\nHOT KEY：Control + Shift + T\nIt will create a folder with the name of the sketch file, \ninside the folder there are a copy of the .sketch\nand a 'fonts' folder which collects the font files.\n(Note on the font copyright issues if you want to deliver them.)\nPrefix like 'Font1_、Font2_…' would be added in case some files share a same name.\n\nNOTE:If a font split different styles in different files\n(e..g xxxfont-light.ttf, xxxfont-bold.ttf, xxxfont-italic.ttf, ...)，\nbut you just take some of them，the plug-in would only copy what you used.\n\nAny question please contact: xixi@bigxixi.com";
     var helptip = "Help:";
 
@@ -31,9 +36,12 @@ var onRun = function(context) {
     var doc = context.document;
     var app = NSApplication.sharedApplication();
     var pages = [doc pages];
-    var fontCheck = {}
-    var flag = 0;
+    var fontCheck = {};
+    var hasTextlayer = 0;
+    var hasMissedFonts = 0;
     var fonts = [];
+    var missFontCheck = {};
+    var missFont = [];
     //check pages if they have textlayers（by utom
     for(var i=0;i<[pages count];i++){
         var page = pages[i]; 
@@ -41,21 +49,34 @@ var onRun = function(context) {
         for (var n=0; n<[tempLayers count];n++){
             var layer = tempLayers[n];
             if (layer.className() == "MSTextLayer"){
-                flag++;
+                hasTextlayer++;
                 //in case there are multiple fonts in one text layer
+                //then check for missing fonts
                 var tempFontName = layer.attributedString().fontNames().toString().replace('{(','').replace(')}','').replace(/\n/g,'').replace(/\u0022/g,'').split(',');
+                var missFontName = layer.attributedString().unavailableFontNames();
+                if(missFontName != "{(\n)}"){
+                    hasMissedFonts = 1;
+                    missFontName = missFontName.toString().replace('{(','').replace(')}','').replace(/\n/g,'').replace(/\u0022/g,'').split(',');
+                    for(var v=0;v<missFontName.length;v++){
+                        var missFontTemp = missFontName[v];
+                        //remove duplicated missed font names
+                        if (!missFontCheck[missFontTemp]){
+                            missFontCheck[missFontTemp] = true;
+                            missFont.push(missFontTemp); 
+                        }
+                    }
+                }
                 for(var z=0;z<tempFontName.length;z++){
                     var fontName = tempFontName[z];
-                    //remove duplicated font names
-                    if (!fontCheck[fontName]){
+                    //only store available fonts
+                    if (!fontCheck[fontName] && !missFontCheck[fontName]){
                         fontCheck[fontName] = true;
                         fonts.push(fontName); 
-                        }
+                    }
                 }
             }
         }
     }
-
     //create folder function
     var createFolderAtPath = function(pathString) {
         var fileManager = [NSFileManager defaultManager];
@@ -70,12 +91,20 @@ var onRun = function(context) {
         }
         return nil;
         }
-
-    //check flag
+    //check if an object is empty
+    var isEmpty = function(obj) {
+        for(var e in obj){
+            return false;
+            }
+        return true;
+        }
+    //check if the file saved & if there are texrlayers
     var ofilePath = doc.fileName();
     if(ofilePath == null){
         app.displayDialog_withTitle(savetip, tips);
-    }else if(flag == 0){
+        hasTextlayer = 0;
+        hasMissedFonts = 0;
+    }else if(hasTextlayer == 0){
         app.displayDialog_withTitle(notextlayer, tips);
         //ask for save location
         var fileNameFull = ofilePath.substring(ofilePath.lastIndexOf("/")+1,ofilePath.length());
@@ -101,7 +130,8 @@ var onRun = function(context) {
                     [openFolderCMD setArguments:["-c", openFolder]];
                     [openFolderCMD launch];
         }else{
-            flag = 0;
+            hasTextlayer = 0;
+            hasMissedFonts = 0;
             }
     }else{
         //ask for save location 
@@ -151,7 +181,7 @@ var onRun = function(context) {
             var tempGroupElement;
             var tempGroupElementItem;
             var fontLocationTemp;
-            var fontLocations = new Array();
+            var fontLocations = [];
 
             for(var m=0;m<fonts.length;m++){
                 tempGroupElement=fonts[m];
@@ -175,16 +205,34 @@ var onRun = function(context) {
                 copyFonts += "cp " + '"' + fontLocations[g] + '" "' + targetFontPath + '";';
 
             }
-            copyFonts +="cp " + '"' + ofilePath + '" "' + collectPath + "/" + fileNameFull + '";' + "rm " +  '"' + fontlist + '";' + "rm " +  '"' + fontMadataList + '"';
+            copyFonts += "cp " + '"' + ofilePath + '" "' + collectPath + "/" + fileNameFull + '";' + "rm " +  '"' + fontlist + '";' + "rm " +  '"' + fontMadataList + '"';
             var copyFontsCMD = [[NSTask alloc] init];
             [copyFontsCMD setLaunchPath: @"/bin/sh"];
             [copyFontsCMD setArguments:["-c", copyFonts]];
             [copyFontsCMD launch];
-            var fontPrint="";
+            var fontPrint = "";
             for(var x=0;x<fonts.length;x++){
                 fontPrint += fonts[x]+"\n";
             } 
-            app.displayDialog_withTitle(doneWithFons+fontPrint, tips);
+            if(hasMissedFonts == 1){
+                if(isEmpty(fonts)){
+                     doneWithFonts = allFontsmissed;
+                }              
+                var missedFontPrint = "";
+                for(var y=0;y<missFont.length;y++){
+                    missedFontPrint += missFont[y]+"\n";
+                }
+                fontPrint += fontMissNote + missedFontPrint; 
+                //create font list
+                var MakeMissedFontList = 'echo "' + missedFontPrint + '" > "' + collectFontPath + '/' + missedFontListTitle + '"';
+                var MakeMissedFontListCMD = [[NSTask alloc] init];
+                    [MakeMissedFontListCMD setLaunchPath: @"/bin/sh"];
+                    [MakeMissedFontListCMD setArguments:["-c", MakeMissedFontList]];
+                    [MakeMissedFontListCMD launch];
+                //reset flag
+                hasMissedFonts = 0;
+            }
+            app.displayDialog_withTitle(doneWithFonts+fontPrint, tips);
             //Open the folder
             var openFolder = "open " + '"' + collectPath + '/"';
             var openFolderCMD = [[NSTask alloc] init];
@@ -192,7 +240,7 @@ var onRun = function(context) {
                 [openFolderCMD setArguments:["-c", openFolder]];
                 [openFolderCMD launch];
         }else{
-            flag = 0;
+            hasTextlayer = 0;
         }
         
     }
