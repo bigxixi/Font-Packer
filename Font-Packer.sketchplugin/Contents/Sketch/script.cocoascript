@@ -2,6 +2,7 @@
 //todo:
 //1.a checkbox to select and export the whole font family
 //2.a progressbar when exporting
+//3.remove duplicated font files
 //Not good at either coding or English, hope you can understand my code and descriptions :)
 
 //check system language.only Chinese and English for now.
@@ -235,7 +236,7 @@ var onRun = function(context) {
             var copyFonts = "";
             for(var g=0;g<fontLocations.length;g++){
                 tempFontName = fontLocations[g].substring(fontLocations[g].lastIndexOf("/")+1,fontLocations[g].length());
-                targetFontPath = collectFontPath + "/" + "Font" + (g+1) + "_" + tempFontName;
+                targetFontPath = collectFontPath + "/" + "(" + fonts[g].toString().replace(/\s/g,"") + ")" + tempFontName;
                 copyFonts += "cp " + '"' + fontLocations[g] + '" "' + targetFontPath + '";';
 
             }
