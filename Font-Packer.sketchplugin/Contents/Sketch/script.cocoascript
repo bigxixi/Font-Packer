@@ -1,4 +1,4 @@
-//script by bigxixi 2016.10
+//script by bigxixi 2016.10.24
 //todo:
 //1.a checkbox to select and export the whole font family
 //2.a progressbar when exporting
@@ -194,6 +194,40 @@ var onRun = function(context) {
                         fontLocations[m] = fontTempGroup[n];
                     }
                 }
+                 //In some situations, we need plan B - the 'system_profiler SPFontsDataType' methed.
+            if(!fontLocations[m]){
+                    var fontlistB = collectPath + "/sysfontsB.txt";
+                    if(!NSFileManager.defaultManager().fileExistsAtPath(fontlistB)){
+                        var getSysFonts="system_profiler SPFontsDataType | grep -E -v '^$|^[a-zA-Z]|Kind:|Valid:|Enabled:|Typefaces:|Full Name:|Style:|Version:|Vendor:|Unique Name:|Designer:|Copyright:|Outline:|Valid:|Enabled:|Duplicate:|Copy Protected:|Embeddable:|Trademark:|Description:|Copyright' > " + '"' + fontlistB + '"';
+                        var getFontsCMD = [[NSTask alloc] init];
+                            [getFontsCMD setLaunchPath: @"/bin/sh"];
+                            [getFontsCMD setArguments:["-c", getSysFonts]];
+                            [getFontsCMD launch];
+                             // wait for completion
+                            [getFontsCMD waitUntilExit];
+                    }
+                    var fontTempB = readTextFromFile(fontlistB);
+                    //split into string array by "location:"
+                    var fontTempGroupB =[fontTempB componentsSeparatedByString:@"Location: "];
+                    var tempGroupElementB = fonts[m].toString().replace(/\s/g,"");
+                        tempGroupElementB = tempGroupElementB.substring(0,tempGroupElementB.indexOf('-'))
+                    var tempGroupElementItemB;
+                    var fontLocationTempB;
+                    for(var n=0;n<[fontTempGroupB count];n++){
+                        tempGroupElementItemB = fontTempGroupB[n];
+                        fontLocationTempB = tempGroupElementItemB.rangeOfString(tempGroupElementB.toString());
+                        if(fontLocationTempB.length!=0){
+                            fontLocationTempB = [tempGroupElementItemB componentsSeparatedByString:@"\n"];
+                            fontLocations[m] = fontLocationTempB[0];
+                        }
+                    }
+
+                }
+                var tempfilepath = collectPath + "/sysfontsB.txt";
+                if(NSFileManager.defaultManager().fileExistsAtPath(tempfilepath)){ 
+                   [[NSFileManager defaultManager] removeItemAtPath:tempfilepath error:nil];
+                }
+                //Plan B end
             }
             //copy the font files
             var targetFontPath;
