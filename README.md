@@ -7,7 +7,7 @@
 # Font-Packer
 A Sketch plugin to collect font files you used in your sketch file.  
 Work on Sketch 3.9.1 and up(not test in lower versions).<br>
-中文版介绍及下载[点这里](http://bigxixi.com/fontpacker/)<br>
+中文版介绍[点这里](http://sketch.im/plugins/28/)<br>
 
 
 ##How to install:
