@@ -1,7 +1,9 @@
 ![demoGIF](https://raw.githubusercontent.com/bigxixi/ReadMe-Resources/master/Font-Packer/logoDemo.gif)<br>
-### There are some bugs on Sierra (MacOS 10.12) that if you use some fonts in the sketch file, the plugin will not work.  
-### I am working on it, hope to fixed it in some days.  
-### 请大家注意，Sierra (MacOS 10.12)下有如果使用了某些字体会出问题，我正在解决，请稍候。  
+### 1.2 update:  
+>fixed in Sierra(MacOS 10.12) some font can not be found  
+>change the output font file name format  
+>解决了 Sierra(MacOS 10.12) 下一些字体找不到导致插件不工作的问题，建议重新下载安装
+
 # Font-Packer
 A Sketch plugin to collect font files you used in your sketch file.  
 Work on Sketch 3.9.1 and up(not test in lower versions).<br>
