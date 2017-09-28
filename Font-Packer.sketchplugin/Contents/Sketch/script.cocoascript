@@ -20,15 +20,15 @@ if(NSUserDefaults.standardUserDefaults().objectForKey("AppleLanguages").objectAt
     var helptip = "帮助：";
     }else{
     var tips = "NOTE:";
-    var loading = "If there are a lot of fonts on your MAC,\nit will take a moument, be patient...\nhit OK and go on.";
+    var loading = "If there are a lot of fonts on your MAC,\nit will take a moment, be patient...\n\nJust hit OK and go on.";
     var savetip = "Plaese save your Sketch file first! ";
     var notextlayer = "Didn't find any textlayers, only the .sketch file it self would be exported.";
     var done = "DONE!";
     var doneWithFonts = "Done! Fonts in this file：\n";
-    var allFontsmissed = "Oops!All fonts in this file missed!\n\n";
+    var allFontsmissed = "Oops! All fonts in this file missed!\n\n";
     var fontMissNote = "\nMissed fonts:\n";
     var missedFontListTitle = "MissedFonts.txt";
-    var helptext = "This plug-in can help you collect the font files you used in your sketch file.\nHOT KEY：Control + Shift + T\nIt will create a folder with the name of the sketch file, \ninside the folder there are a copy of the .sketch\nand a 'fonts' folder which collects the font files.\n(Note on the font copyright issues if you want to deliver them.)\nPrefix like 'Font1_、Font2_…' would be added in case some files share a same name.\n\nNOTE:If a font split different styles in different files\n(e..g xxxfont-light.ttf, xxxfont-bold.ttf, xxxfont-italic.ttf, ...)，\nbut you just take some of them，the plug-in would only copy what you used.\n\nAny question please contact: xixi@bigxixi.com";
+    var helptext = "This plug-in can help you collect the font files you used in your sketch file.\nHOT KEY：Control + Shift + T\nIt will create a folder with the name of the sketch file, \ninside the folder there are a copy of the .sketch\nand a 'fonts' folder which collects the font files.\n(Note on the font copyright issues if you want to deliver them.)\nPrefix like 'Font1_、Font2_…' would be added in case some files share a same name.\n\nNOTE:If a font is split different styles in different files\n(e..g xxxfont-light.ttf, xxxfont-bold.ttf, xxxfont-italic.ttf, ...)，\nbut you just take some of them，the plug-in would only copy what you used.\n\nAny question please contact: xixi@bigxixi.com";
     var helptip = "Help:";
 
 };
@@ -151,7 +151,7 @@ var onRun = function(context) {
             //get font list with name and location
             //
             //main idea:
-            //I was confused but the previous 'system_profiler SPFontsDataType' methed would miss some font info, so I change the way.
+            //I was confused but the previous 'system_profiler SPFontsDataType' method would miss some font info, so I changed the way.
             //there are 4 Font folders in Mac OS -
             //>  /System/Library/Fonts/
             //>  ~/Library/Fonts/
