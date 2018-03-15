@@ -24,6 +24,7 @@
   },
   "identifier" : "com.sketch.bigxixi.FontPacker",
   "version" : "1.2",
+  "appcast": "https://raw.githubusercontent.com/bigxixi/Font-Packer/master/appcast.xml",
   "description" : "Collect font files you used in your sketch file.",
   "authorEmail" : "xixi@bigxixi.com",
   "name" : "Font Packer"
