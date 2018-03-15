@@ -6,7 +6,7 @@
     <description>Collect font files you used in your sketch file.</description>
     <language>en</language>
       <item>
-        <title>Version 1.2</title>
+        <title>Version 1.21</title>
         <description>
           <![CDATA[
             <ul>
@@ -14,7 +14,7 @@
             </ul>
           ]]>
         </description>
-        <enclosure url="https://github.com/bigxixi/Font-Packer/archive/master.zip" sparkle:version="1.2" />
+        <enclosure url="https://github.com/bigxixi/Font-Packer/archive/master.zip" sparkle:version="1.21" />
       </item>
   </channel>
 </rss>
