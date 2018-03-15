@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Font Packer</title>
+    <link>https://raw.githubusercontent.com/bigxixi/Font-Packer/master/appcast.xml</link>
+    <description>Collect font files you used in your sketch file.</description>
+    <language>en</language>
+      <item>
+        <title>Version 1.2</title>
+        <description>
+          <![CDATA[
+            <ul>
+            <li>add to sketch plugin update system</li>
+            </ul>
+          ]]>
+        </description>
+        <enclosure url="https://github.com/bigxixi/Font-Packer/archive/master.zip" sparkle:version="1.2" />
+      </item>
+  </channel>
+</rss>
