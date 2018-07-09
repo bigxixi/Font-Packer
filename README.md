@@ -9,7 +9,7 @@
 A Sketch plugin to collect font files you used in your Sketch file.  
 Works in Sketch 3.9.1 and up (hasn't been tested in lower versions).
 
-中文版介绍[点这里](http://sketch.im/plugins/28/)<br>
+中文版介绍[点这里](http://sketch.cm/plugins/28)<br>
 
 
 ## How to install:
