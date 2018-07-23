@@ -35,4 +35,14 @@ And in case some files share the same name, a prefix like `Font1_、Font2_…` w
 
 If there are missed fonts in the sketch file, the plugin will generate a list and only copy the available ones.
 
-Special thanks to [utom](https://github.com/utom)
+Special thanks to [utom](https://github.com/utom)  
+
+## Donation - 求打赏:
+如果您觉得本插件好用，欢迎打赏，感谢您的支持！  
+
+[<img src="https://raw.githubusercontent.com/bigxixi/bigxixi.github.io/master/donate/index.hyperesources/wechat.png" width="30%" height="30%">](http://bigxixi.com/donate/index.html)
+[<img src="https://raw.githubusercontent.com/bigxixi/bigxixi.github.io/master/donate/index.hyperesources/alipay%402x.jpg" width="30%" height="30%">](http://bigxixi.com/donate/index.html)  
+
+也欢迎使用 PayPal：  
+
+[<img src="https://raw.githubusercontent.com/bigxixi/bigxixi.github.io/master/donate/index.hyperesources/paypal.png" width="30%" height="30%">](https://www.paypal.me/bigxixi/index.html)  
