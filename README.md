@@ -1,5 +1,7 @@
 ![demoGIF](https://raw.githubusercontent.com/bigxixi/ReadMe-Resources/master/Font-Packer/logoDemo.gif)<br>
 
+### Sorry I didnt keep my Sketch update (52.5), some issues of this plugin with newer version are beyond my ability :(  
+> 抱歉我仍在使用 Sketch 52.5 ，很多插件在新版本下遇到的问题我也无能为力。  
 ### 1.2 update:  
 > fixed in Sierra(MacOS 10.12) some font can not be found  
 > change the output font file name format  
